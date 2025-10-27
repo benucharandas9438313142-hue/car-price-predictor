@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SECOND HAND CAR PRICE PREDICTION</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: url("{{ url_for('static', filename='images/bg_car.png') }}") no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        h1 {
+            text-align: center;
+            color: teal;
+        }
+
+        marquee {
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        form {
+            width: 1000px;
+            margin: 30px auto;
+            padding: 25px 40px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px 40px;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* ✅ Ensures brand, model, car appear in a single row */
+        .row {
+            grid-column: 1 / 4;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #333;
+            display: block;
+            margin-top: 10px;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 6px;
+            border: 1px solid #999;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .full-width {
+            grid-column: 1 / 4;
+        }
+
+        input[type="submit"], input[type="button"] {
+            background-color: teal;
+            color: white;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        input[type="submit"]:hover, input[type="button"]:hover {
+            background-color: #006666;
+        }
+
+        .button-group {
+            grid-column: 1 / 4;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .result {
+            width: fit-content;
+            margin: 30px auto;
+            background-color: rgba(0, 128, 128, 0.9);
+            color: #fff;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: bold;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(4px);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>
+        <marquee><font color="teal"><b>AI POWERED FORECASTING OF SECOND-HAND CAR PRICES USING AI&ML</b></font></marquee>
+    </h1>
+
+    <h1><b><font color="black">Enter Your Car Data Here</font></b></h1>
+
+    <form action="/predict" method="post">
+
+        <!-- ✅ Brand → Model → Car Name -->
+        <div class="row">
+          <!-- Brand Name -->
+          <div>
+            <label for="bn">Brand Name:</label>
+            <select id="bn" name="bn" required>
+              <option value="">-- Select Brand Name --</option>
+              {% for brand in brands %}
+              <option value="{{ brand }}">{{ brand }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Car Model -->
+          <div>
+            <label for="cm">Car Model:</label>
+            <select id="cm" name="cm" required>
+              <option value="">-- Select Car Model --</option>
+            </select>
+          </div>
+
+          <!-- Car Name -->
+          <div>
+            <label for="cn">Car Name:</label>
+            <select id="cn" name="cn" required>
+              <option value="">-- Select Car Name --</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Other Fields -->
+        <div>
+            <label for="va">Vehicle Age:</label>
+            <input type="text" id="va" name="va">
+        </div>
+
+        <div>
+            <label for="kd">KM Driven:</label>
+            <input type="text" id="kd" name="kd">
+        </div>
+
+        <div>
+            <label for="st">Seller Type:</label>
+            <select id="st" name="st" required>
+                <option value="">-- Select Seller Type --</option>
+                <option value="Individual">Individual</option>
+                <option value="Dealer">Dealer</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="ft">Fuel Type:</label>
+            <select id="ft" name="ft" required>
+                <option value="">-- Select Fuel Type --</option>
+                <option value="Petrol">Petrol</option>
+                <option value="Diesel">Diesel</option>
+                <option value="CNG">CNG</option>
+                <option value="EV">EV</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="tt">Transmission Type:</label>
+            <select id="tt" name="tt" required>
+                <option value="">-- Select Transmission --</option>
+                <option value="Manual">Manual</option>
+                <option value="Auto">Auto</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="mg">Mileage:</label>
+            <input type="text" id="mg" name="mg">
+        </div>
+
+        <div>
+            <label for="eg">Engine:</label>
+            <input type="text" id="eg" name="eg">
+        </div>
+
+        <div>
+            <label for="mp">Max Power:</label>
+            <input type="text" id="mp" name="mp">
+        </div>
+
+        <div>
+            <label for="seat">Seat:</label>
+            <select id="seat" name="seat" required>
+                <option value="">-- Select Seat Count --</option>
+                {% for i in range(1, 11) %}
+                    <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="button-group">
+            <input type="submit" value="Submit">
+            <input type="button" value="Reset" onclick="resetForm()">
+        </div>
+    </form>
+
+    <div class="result">
+        {{ predicted_price }}
+    </div>
+
+    <script>
+        const brandSelect = document.getElementById('bn');
+        const modelSelect = document.getElementById('cm');
+        const carSelect = document.getElementById('cn');
+
+        brandSelect.addEventListener('change', async () => {
+            const brand = brandSelect.value;
+            modelSelect.innerHTML = '<option value="">-- Select Car Model --</option>';
+            carSelect.innerHTML = '<option value="">-- Select Car Name --</option>';
+
+            if (brand) {
+                const res = await fetch(`/get_models/${brand}`);
+                const models = await res.json();
+                models.forEach(model => {
+                    const opt = document.createElement('option');
+                    opt.value = model;
+                    opt.textContent = model;
+                    modelSelect.appendChild(opt);
+                });
+            }
+        });
+
+        modelSelect.addEventListener('change', async () => {
+            const brand = brandSelect.value;
+            const model = modelSelect.value;
+            carSelect.innerHTML = '<option value="">-- Select Car Name --</option>';
+
+            if (brand && model) {
+                const res = await fetch(`/get_cars/${brand}/${model}`);
+                const cars = await res.json();
+                cars.forEach(car => {
+                    const opt = document.createElement('option');
+                    opt.value = car;
+                    opt.textContent = car;
+                    carSelect.appendChild(opt);
+                });
+            }
+        });
+
+        function resetForm() {
+            document.querySelector("form").reset();
+            modelSelect.innerHTML = '<option value="">-- Select Car Model --</option>';
+            carSelect.innerHTML = '<option value="">-- Select Car Name --</option>';
+            document.querySelector(".result").innerText = "";
+        }
+    </script>
+</body>
+</html>
